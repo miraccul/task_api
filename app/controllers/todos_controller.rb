@@ -7,7 +7,7 @@ class TodosController < ApplicationController
             @category = Category.new
             @category.title = params[:title]
             @category.save
-            @category_id = Category.find_by(title: "Job").id
+            @category_id = Category.find_by(title: params[:title]).id
         else
             @category_id = params[:id]   
         end
