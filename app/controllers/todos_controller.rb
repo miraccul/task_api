@@ -3,22 +3,14 @@ class TodosController < ApplicationController
     skip_before_action :verify_authenticity_token
 
     def create
-        if params[:title]
-            @category = Category.new
-            @category.title = params[:title]
-            @category.save
-            @category_id = Category.find_by(title: params[:title]).id
-        else
-            @category_id = params[:id]   
-        end
-        @task = Task.new
-        @task.category_id = @category_id
-        @task.text = params[:text]
-        @task.isComplited = false
-        if @task.save
-            render json: @task, status: :created
-        else
-            render json: @task.errors, status: :unprocessable_entity
+        if params[:title] && params[:text]
+            @category = Category.where(:title => params[:title]).first_or_create(title: params[:title])
+            @category_id = @category[:id]
+            Task.create(category_id: @category_id, text: params[:text], isComplited: false)
+            render json: @category.as_json(include: :task), status: :created
+        elsif params[:category_id] && params[:text]
+            @task = Task.create(category_id: params[:category_id], text: params[:text], isComplited: false)
+            render json: @task.as_json
         end
     end
 

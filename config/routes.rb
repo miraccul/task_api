@@ -1,7 +1,6 @@
 Rails.application.routes.draw do
-  get "/projects", to: "projects#index"
-  post "/todos", to: "todos#create"
-  resources :projects do
-    resources :todos
+  resources :projects, only: :index do
+    resources :todos, only: :update
   end
+  resources :todos, only: :create
 end
